@@ -39,14 +39,31 @@ struct Proxy {
 
 struct GeoLocation {
     std::string cidade;
+    std::string regiao;
     std::string pais;
+    std::string codigo_pais;
     double latitude;
     double longitude;
+    std::string fuso_horario;
+    std::string isp;
 };
 
 std::map<int, Proxy> proxies = {
     {1, {"192.168.1.100", 8080}},
-    {2, {"10.0.0.1", 3128}}
+    {2, {"10.0.0.1", 3128}},
+    {3, {"45.32.123.45", 80}},
+    {4, {"172.16.254.1", 9050}},
+    {5, {"198.51.100.10", 443}},
+    {6, {"203.0.113.5", 8081}},
+    {7, {"93.184.220.100", 3128}},
+    {8, {"185.2.3.4", 1080}},
+    {9, {"142.250.1.1", 8000}},
+    {10, {"8.8.8.8", 8080}}, // Exemplo fictício com IP do Google DNS
+    {11, {"51.15.209.123", 80}},
+    {12, {"77.88.99.100", 443}},
+    {13, {"94.23.45.67", 9050}},
+    {14, {"103.45.67.89", 3128}},
+    {15, {"188.166.1.2", 8080}}
 };
 
 // Declarações antecipadas
@@ -149,7 +166,7 @@ void exibir_logo() {
     SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
     std::cout << "                                           \n";
     std::cout << "                                           \n";
-    std::cout << "       MULTI-DDOS TOOL v" << VERSAO << " - POWERED BY xAI      \n";
+    std::cout << "   MULTI-DDOS TOOL v" << VERSAO << " - POWERED BY xAI      \n";
     std::cout << "   Desenvolvido por Seven &  xAI        - 2025       \n";
     std::cout << "                                                                \n\n";
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
@@ -287,12 +304,164 @@ bool verificar_cloudflare(const std::string& url) {
 
 GeoLocation obter_geolocalizacao(const std::string& ip) {
     GeoLocation geo;
-    geo.cidade = "Sao Paulo"; // Simulação
-    geo.pais = "Brasil";
-    geo.latitude = -23.5489;
-    geo.longitude = -46.6388;
-    std::cout << YELLOW << "Geolocalizacao simulada para " << ip << ": " << geo.cidade << ", " << geo.pais << "\n";
-    std::cout << "Link Google Maps: https://www.google.com/maps?q=" << geo.latitude << "," << geo.longitude << "\n" << RESET;
+    WSADATA wsaData;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN); // Amarelo
+    std::cout << "Tentando obter geolocalizacao para " << ip << "...\n";
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Branco
+
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED); // Vermelho
+        std::cerr << "Falha ao iniciar Winsock.\n";
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sock == INVALID_SOCKET) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+        std::cerr << "Falha ao criar socket.\n";
+        WSACleanup();
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    // Resolvendo o hostname ifconfig.me para IP
+    struct addrinfo hints, * result = nullptr;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    if (getaddrinfo("ifconfig.me", "80", &hints, &result) != 0) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+        std::cerr << "Falha ao resolver ifconfig.me.\n";
+        closesocket(sock);
+        WSACleanup();
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    sockaddr_in servidor = *(struct sockaddr_in*)result->ai_addr;
+    servidor.sin_port = htons(80); // Porta HTTP padrão
+    freeaddrinfo(result);
+
+    if (connect(sock, (sockaddr*)&servidor, sizeof(servidor)) < 0) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+        std::cerr << "Falha ao conectar ao ifconfig.me.\n";
+        closesocket(sock);
+        WSACleanup();
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    // Requisição HTTP com User-Agent personalizado
+    std::string requisicao = "GET /all.json HTTP/1.1\r\n"
+        "Host: ifconfig.me\r\n"
+        "User-Agent: Bruno\r\n"
+        "X-Forwarded-For: " + ip + "\r\n" // Passa o IP desejado no cabeçalho
+        "Connection: close\r\n\r\n";
+    if (send(sock, requisicao.c_str(), requisicao.size(), 0) < 0) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+        std::cerr << "Falha ao enviar requisicao.\n";
+        closesocket(sock);
+        WSACleanup();
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    char buffer[4096];
+    std::string resposta;
+    int bytes_recebidos;
+    while ((bytes_recebidos = recv(sock, buffer, sizeof(buffer) - 1, 0)) > 0) {
+        buffer[bytes_recebidos] = '\0';
+        resposta += buffer;
+    }
+    if (bytes_recebidos < 0) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+        std::cerr << "Falha ao receber resposta.\n";
+        closesocket(sock);
+        WSACleanup();
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    closesocket(sock);
+    WSACleanup();
+
+    if (resposta.find("HTTP/1.1 200 OK") == std::string::npos) {
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+        std::cerr << "Resposta invalida do servidor.\n";
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+        return geo;
+    }
+
+    // Parsing da resposta JSON do ifconfig.me
+    size_t pos;
+    pos = resposta.find("\"city\":\"");
+    if (pos != std::string::npos) {
+        pos += 8;
+        size_t fim = resposta.find("\"", pos);
+        geo.cidade = resposta.substr(pos, fim - pos);
+    }
+    pos = resposta.find("\"region\":\"");
+    if (pos != std::string::npos) {
+        pos += 10;
+        size_t fim = resposta.find("\"", pos);
+        geo.regiao = resposta.substr(pos, fim - pos);
+    }
+    pos = resposta.find("\"country_name\":\"");
+    if (pos != std::string::npos) {
+        pos += 15;
+        size_t fim = resposta.find("\"", pos);
+        geo.pais = resposta.substr(pos, fim - pos);
+    }
+    pos = resposta.find("\"country\":\"");
+    if (pos != std::string::npos) {
+        pos += 11;
+        size_t fim = resposta.find("\"", pos);
+        geo.codigo_pais = resposta.substr(pos, fim - pos);
+    }
+    pos = resposta.find("\"latitude\":");
+    if (pos != std::string::npos) {
+        pos += 11;
+        size_t fim = resposta.find(",", pos);
+        if (fim == std::string::npos) fim = resposta.find("}", pos);
+        geo.latitude = std::stod(resposta.substr(pos, fim - pos));
+    }
+    pos = resposta.find("\"longitude\":");
+    if (pos != std::string::npos) {
+        pos += 12;
+        size_t fim = resposta.find(",", pos);
+        if (fim == std::string::npos) fim = resposta.find("}", pos);
+        geo.longitude = std::stod(resposta.substr(pos, fim - pos));
+    }
+    pos = resposta.find("\"timezone\":\"");
+    if (pos != std::string::npos) {
+        pos += 11;
+        size_t fim = resposta.find("\"", pos);
+        geo.fuso_horario = resposta.substr(pos, fim - pos);
+    }
+    pos = resposta.find("\"connection\":\"");
+    if (pos != std::string::npos) {
+        pos += 13;
+        size_t fim = resposta.find("\"", pos);
+        geo.isp = resposta.substr(pos, fim - pos); // "connection" é o mais próximo de ISP disponível
+    }
+
+    // Exibe resultados no console
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN); // Amarelo
+    std::cout << "Geolocalizacao para " << ip << ":\n";
+    if (!geo.cidade.empty()) std::cout << "Cidade: " << geo.cidade << "\n";
+    if (!geo.regiao.empty()) std::cout << "Regiao: " << geo.regiao << "\n";
+    if (!geo.pais.empty()) std::cout << "Pais: " << geo.pais << " (" << geo.codigo_pais << ")\n";
+    if (geo.latitude != 0.0 || geo.longitude != 0.0) {
+        std::cout << "Latitude: " << geo.latitude << ", Longitude: " << geo.longitude << "\n";
+        std::cout << "Link Google Maps: https://www.google.com/maps?q=" << geo.latitude << "," << geo.longitude << "\n";
+    }
+    if (!geo.fuso_horario.empty()) std::cout << "Fuso horario: " << geo.fuso_horario << "\n";
+    if (!geo.isp.empty()) std::cout << "ISP: " << geo.isp << "\n";
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Branco
+
     return geo;
 }
 
