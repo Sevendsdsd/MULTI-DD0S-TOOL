@@ -1,60 +1,87 @@
-Nome: MULTIDDOSTOOL
+# 🚀 MULTIDDOSTOOL
 
-Desenvolvido por: Seven & xAI
+**👨‍💻 Desenvolvido por:** Seven & xAI
 
-LEMBRANDO NAO DOU SUPORTE ISSO E UM PROTOTIPO NAO ME RESPONSABILIZO PELO USO ERRADO DA FERRAMENTA
+> ⚠️ **Aviso Importante:**
+> Este software é um protótipo e **não recebe suporte**. O uso indevido da ferramenta é de inteira responsabilidade do usuário. **Utilizar contra sistemas sem permissão é ilegal e eticamente inaceitável.**
 
-Descricao Geral:
+## 🛠️ Descrição Geral
 
-MULTIDDOSTOOL e uma ferramenta avancada de simulacao de ataques de negacao de servico (DDoS) projetada para testes de seguranca e analise de resistencia de redes, servidores e dispositivos IoT. Desenvolvida em C++, a ferramenta oferece uma ampla variedade de metodos de ataque, incluindo inundacao de pacotes, ataques amplificados, exploracao de protocolos especificos e simulacao de botnets. Seu objetivo e permitir que administradores de sistemas avaliem a robustez de suas infraestruturas contra diferentes tipos de ataques DDoS.
+MULTIDDOSTOOL é uma **ferramenta avançada de simulação de ataques DDoS** (negação de serviço distribuída) projetada para **testes de segurança e análise de resistência** de redes, servidores e dispositivos IoT. Desenvolvida em **C++**, oferece diversos métodos de ataque, permitindo que administradores de sistemas avaliem a robustez de suas infraestruturas.
 
-Funcionalidades Principais:
+🔹 **Inundação de pacotes** (UDP, TCP, ICMP, SYN, ACK, RST, FIN)
+🔹 **Ataques amplificados** (DNS, NTP, SNMP, SSDP, Memcached, Chargen, QOTD)
+🔹 **Exploração de protocolos específicos**
+🔹 **Simulação de botnets** (Mirai, Hoax)
+🔹 **Ataques a websites e APIs** (HTTP Flood, Slowloris, RUDY, Pingback XML-RPC)
+🔹 **Ataques a redes locais e dispositivos IoT**
 
-Ataques a IPs:
-Inundacao UDP, TCP, ICMP, SYN, ACK, RST, FIN: Envia pacotes massivos para sobrecarregar o alvo.
-Ping da Morte: Explora pacotes ICMP grandes para causar instabilidade.
-Ataque Smurf: Usa redes de broadcast para amplificar trafego.
-Inundacao por Fragmentacao: Sobrecarrega o processamento com pacotes fragmentados.
-Ataque LAND: Spoofa o IP de origem para criar loops no alvo.
-Falsificacao ARP: Confunde redes com pacotes ARP falsos.
-Amplificacao (DNS, NTP, SNMP, SSDP, Memcached, Chargen, QOTD): Usa servidores vulneraveis para multiplicar o trafego.
-Simulacao de Botnets (Mirai, Hoax): Simula ataques coordenados por multiplos "bots".
-Inundacao Multi-Alvo: Ataca varios IPs simultaneamente.
-Ataques a Websites:
-Inundacao HTTP: Envia requisicoes GET/POST massivas.
-Slowloris: Mantem conexoes abertas lentamente para esgotar slots do servidor.
-Ataque RUDY: Envia POSTs lentos com payloads grandes.
-Inundacao WebSocket e SSL/TLS: Sobrecarrega conexoes especificas.
-Ataques de Leitura/Post Lento: Ocupa recursos com operacoes prolongadas.
-Pingback XML-RPC: Explora amplificacao via XML-RPC.
-Inundacao HEAD, OPTIONS, TRACE: Usa metodos HTTP secundarios para sobrecarga.
-Ataque Cookie Bomb: Envia cookies grandes para travar o servidor.
-Ataque Range Header: Usa cabecalhos Range maliciosos.
-GET/POST Flood: Envia requisicoes com queries ou formularios extensos.
-Ataques a Redes Locais:
-Inundacao MAC: Enche tabelas MAC com enderecos falsos.
-Ataque Broadcast DHCP: Sobrecarrega redes com solicitacoes DHCP.
-MAC Spoofing: Falsifica enderecos MAC para confundir switches.
-Inundacao ARP: Satura redes com pacotes ARP falsos.
-Ataques a Dispositivos IoT:
-Inundacao Telnet, MQTT, CoAP: Ataca portas especificas de dispositivos IoT.
-Inundacao SSDP IoT e UPnP: Explora protocolos comuns em IoT.
-Jammer de Caixas de Som: Envia pacotes UDP para interferir em dispositivos de audio.
-Ferramentas de Deteccao:
-Deteccao de IP Real: Resolve URLs para IPs reais.
-Verificacao Cloudflare: Identifica protecao Cloudflare no alvo.
-Geolocalizacao: Fornece localizacao simulada do IP com link para Google Maps.
-Caracteristicas Adicionais:
+## ⚡ Funcionalidades Principais
 
-Uso de Proxies: Permite ataques via proxies pre-configurados.
-IPs Falsos: Gera IPs de origem aleatorios para spoofing.
-Log de Atividades: Registra pacotes enviados, falhas e bytes em arquivo.
-Interface Colorida: Usa cores RGB no console para mensagens informativas (verde para sucesso, vermelho para alertas).
-Modularidade: Suporta multiplas threads para ataques simultaneos, com limite de 5000 threads.
-Uso:
+### 🔹 **Ataques a IPs**
+- **Inundação UDP, TCP, ICMP, SYN, ACK, RST, FIN**: Envio massivo de pacotes para sobrecarga do alvo.
+- **Ping da Morte**: Explora pacotes ICMP grandes para causar instabilidade.
+- **Ataque Smurf**: Amplifica tráfego via redes de broadcast.
+- **Inundação por Fragmentação**: Sobrecarrega processamento do alvo com pacotes fragmentados.
+- **Ataque LAND**: Spoofa o IP de origem para criar loops no alvo.
+- **Falsificação ARP**: Confunde redes com pacotes ARP falsos.
 
-A ferramenta inicia com um menu principal simplificado, permitindo escolher entre ataques a IPs, websites, redes locais, dispositivos IoT ou ferramentas de deteccao. Cada opcao leva a submenus com tipos de ataque especificos, solicitando configuracoes como IP/URL alvo, porta, duracao e numero de threads. O usuario pode optar por usar proxies ou IPs falsos para maior anonimato.
+### 🔹 **Ataques Amplificados**
+- **DNS, NTP, SNMP, SSDP, Memcached, Chargen, QOTD**: Utiliza servidores vulneráveis para multiplicar o tráfego ao alvo.
 
-Aviso:
+### 🔹 **Simulação de Botnets**
+- **Mirai, Hoax**: Simula ataques coordenados por múltiplos "bots".
 
-MULTIDDOSTOOL e destinada exclusivamente para testes de seguranca em ambientes autorizados. O uso indevido contra sistemas sem permissao e ilegal e eticamente inaceitavel. Os desenvolvedores nao se responsabilizam por misuse da ferramenta.
+### 🔹 **Ataques a Websites**
+- **Inundação HTTP**: Envio massivo de requisições GET/POST para sobrecarga.
+- **Slowloris**: Mantém conexões abertas lentamente para esgotar os recursos do servidor.
+- **Ataque RUDY**: Envia POSTs lentos com payloads grandes para esgotar conexões.
+- **Pingback XML-RPC**: Explora amplificação via XML-RPC.
+- **Cookie Bomb**: Envia cookies enormes para travar o servidor.
+
+### 🔹 **Ataques a Redes Locais**
+- **Inundação MAC**: Preenche tabelas MAC com endereços falsos.
+- **Ataque Broadcast DHCP**: Sobrecarrega redes com solicitações DHCP.
+- **MAC Spoofing**: Falsifica endereços MAC para enganar switches.
+
+### 🔹 **Ataques a Dispositivos IoT**
+- **Inundação Telnet, MQTT, CoAP**: Ataca portas específicas de dispositivos IoT.
+- **Jammer de Caixas de Som**: Envia pacotes UDP para interferir em dispositivos de áudio.
+
+### 🔹 **Ferramentas de Detecção**
+- **Detecção de IP Real**: Resolve URLs para obter o IP real.
+- **Verificação Cloudflare**: Identifica proteção Cloudflare no alvo.
+- **Geolocalização**: Obtém uma localização aproximada do IP.
+
+## 🔥 Características Adicionais
+- **🛡️ Uso de Proxies**: Permite ataques via proxies pré-configurados.
+- **🔀 IPs Falsos**: Gera IPs de origem aleatórios para spoofing.
+- **📜 Log de Atividades**: Registra pacotes enviados, falhas e bytes transmitidos.
+- **🎨 Interface Colorida**: Usa cores RGB no console para melhor visualização.
+- **🚀 Alta Performance**: Suporta múltiplas threads para ataques simultâneos (limite de **5000 threads**).
+
+## 🖥️ Uso
+A ferramenta inicia com um **menu principal intuitivo**, permitindo escolher entre ataques a:
+
+✅ IPs
+✅ Websites
+✅ Redes Locais
+✅ Dispositivos IoT
+✅ Ferramentas de Detecção
+
+Cada opção leva a submenus detalhados, onde o usuário configura:
+
+- **IP/URL alvo**
+- **Porta**
+- **Duração do ataque**
+- **Número de threads**
+
+🛑 **O usuário pode optar por utilizar proxies ou IPs falsos para maior anonimato.**
+
+## ⚖️ Aviso Legal
+🔴 **O MULTIDDOSTOOL é destinado exclusivamente para testes de segurança em ambientes autorizados.**
+
+Os desenvolvedores **não se responsabilizam** pelo uso indevido da ferramenta. Utilize apenas **em ambientes nos quais você tenha permissão explícita** para testar vulnerabilidades.
+
+---
+⚠️ **Uso indevido desta ferramenta pode resultar em sanções legais.** Certifique-se de **seguir as diretrizes éticas e legais** antes de utilizá-la!
